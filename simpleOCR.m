@@ -26,18 +26,21 @@ function simpleOcr()
     title('Imagen Original'); 
     
     %dibujar segmentos y 
-    k= 1; 
-    while k ~= numObj + 1
+    k = 1; 
+     while k <= numObj
         if sum(sum(segments(k).image)) < 2500
             segments(k) = [];  
             numObj = numObj  - 1;
-        end  
+            k = k-1;
+        end
+        k = k+1;    
+     end  
+     for k = 1:numObj
         label = predictionGivenImage(model,segments(k).image);
         rectangle('Position', segments(k).bBox,'EdgeColor','r');
         text(segments(k).bBox(1),segments(k).bBox(2)... 
             + 2.2*segments(k).center(1),label,'Color','k','FontSize',10);
-        k = k+1;
-    end    
+     end
 end
 
 function predictionGivenClass(classExpected, model)
@@ -50,15 +53,5 @@ end
 function [label_str] = predictionGivenImage(model,imgTest)
     instance4test = getFeatures(imgTest);
     label = predict(model,instance4test);
-    if label == 1
-        label_str = 'uno';
-    elseif label == 2
-        label_str = 'dos';
-    elseif label == 3
-        label_str = 'tres';
-    elseif label == 4
-        label_str = 'cuatro';
-    elseif label == 5
-        label_str = 'cinco';
-    end
+    label_str = ntostr(label);
 end
